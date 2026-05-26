@@ -8,6 +8,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 require("./modules/auth/router/auth.router")(app);
+require("./modules/projects/router/projects.router")(app);
 
 app.get("/", (req, res) => {
   res.send("API is running...");
