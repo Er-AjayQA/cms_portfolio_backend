@@ -1,0 +1,33 @@
+{
+  "name": "cms_portfolio_backend",
+  "version": "1.0.0",
+  "description": "This is my cms portfolio backend.",
+  "homepage": "https://github.com/Er-AjayQA/cms_portfolio_backend#readme",
+  "bugs": {
+    "url": "https://github.com/Er-AjayQA/cms_portfolio_backend/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Er-AjayQA/cms_portfolio_backend.git"
+  },
+  "license": "ISC",
+  "author": "Er.Ajay Kumar",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "seed": "node src/seeders/register.seeder.js",
+    "dev": "npm run seed && nodemon src/server.js",
+    "start": "npm run seed && node src/server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.6.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
