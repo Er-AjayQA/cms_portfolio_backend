@@ -1,16 +1,16 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+require("./modules/auth/router/auth.router")(app);
+
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
-
-require("./modules/auth/router/auth.router")(app);
 
 module.exports = app;
