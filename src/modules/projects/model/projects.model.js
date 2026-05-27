@@ -43,9 +43,10 @@ const projectSchema = new mongoose.Schema(
       trim: true,
     },
 
-    techStack: [
+    techStackId: [
       {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "techStack",
         required: true,
       },
     ],

@@ -68,6 +68,7 @@ exports.createProject = async (req, res) => {
     } = req.body;
 
     const existingProject = await ProjectModel.findOne({ slug });
+
     if (existingProject) {
       return res.status(400).json({ message: "Project slug already exists" });
     }
@@ -75,11 +76,13 @@ exports.createProject = async (req, res) => {
     const thumbnailFile = req.files?.thumbnail?.[0];
     const mediaFiles = req.files?.media || [];
 
-    const thumbnailUrl = thumbnailFile ? getUploadUrl(thumbnailFile.path) : thumbnail;
+    const thumbnailUrl = thumbnailFile
+      ? getUploadUrl(thumbnailFile.path)
+      : thumbnail;
 
     if (!thumbnailUrl) {
       return res.status(400).json({
-        message: "Thumbnail is required, either as an uploaded file or a URL.",
+        message: "Thumbnail is required.",
       });
     }
 
@@ -121,11 +124,28 @@ exports.createProject = async (req, res) => {
       await project.save();
     }
 
-    const populatedProject = await ProjectModel.findById(project._id).populate("media");
+    const populatedProject = await ProjectModel.findById(project._id).populate(
+      "media",
+    );
 
     return res.status(201).json({
       message: "Project created successfully",
       data: populatedProject,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || "Internal server error",
+    });
+  }
+};
+
+exports.getAllProjects = async (req, res) => {
+  try {
+    const projects = await ProjectModel.find().populate("media");
+
+    return res.status(200).json({
+      message: "Projects retrieved successfully",
+      data: projects,
     });
   } catch (error) {
     return res.status(500).json({
