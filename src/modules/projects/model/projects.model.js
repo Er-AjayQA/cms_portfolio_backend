@@ -31,7 +31,7 @@ const projectSchema = new mongoose.Schema(
       required: true,
     },
 
-    images: [
+    media: [
       {
         type: String,
       },
@@ -52,7 +52,6 @@ const projectSchema = new mongoose.Schema(
 
     githubUrl: String,
     liveUrl: String,
-    videoUrl: String,
 
     featured: {
       type: Boolean,
