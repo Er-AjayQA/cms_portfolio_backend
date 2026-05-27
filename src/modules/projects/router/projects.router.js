@@ -8,4 +8,5 @@ module.exports = (app) => {
     projectController.createProject,
   );
   app.get("/projects", projectController.getAllProjects);
+  app.get("/projects/:slug", projectController.getBySlugProject);
 };

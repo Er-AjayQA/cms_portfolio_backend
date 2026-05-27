@@ -54,6 +54,7 @@ exports.createProject = async (req, res) => {
       thumbnail,
       category,
       techStack,
+      techStackId,
       githubUrl,
       liveUrl,
       featured,
@@ -94,7 +95,7 @@ exports.createProject = async (req, res) => {
       thumbnail: thumbnailUrl,
       media: [],
       category,
-      techStack: parseArrayField(techStack),
+      techStackId: parseArrayField(techStackId || techStack),
       githubUrl,
       liveUrl,
       featured: parseBooleanField(featured),
@@ -146,6 +147,31 @@ exports.getAllProjects = async (req, res) => {
     return res.status(200).json({
       message: "Projects retrieved successfully",
       data: projects,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || "Internal server error",
+    });
+  }
+};
+
+exports.getBySlugProject = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const project = await ProjectModel.findOne({ slug }).populate([
+      "media",
+      "techStackId",
+    ]);
+
+    if (!project) {
+      return res.status(404).json({
+        message: "Project not found",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Project retrieved successfully",
+      data: project,
     });
   } catch (error) {
     return res.status(500).json({
