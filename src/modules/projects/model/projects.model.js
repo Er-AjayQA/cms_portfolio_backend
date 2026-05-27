@@ -33,14 +33,14 @@ const projectSchema = new mongoose.Schema(
 
     media: [
       {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "projectMedia",
       },
     ],
 
     category: {
       type: String,
-      enum: ["Frontend", "Backend", "Full Stack", "Mobile App", "UI/UX"],
-      default: "Full Stack",
+      trim: true,
     },
 
     techStack: [

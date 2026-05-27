@@ -1,6 +1,48 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const AuthModel = require("../model/projects.model");
+const ProjectModel = require("../model/projects.model");
+const ProjectMediaModel = require("../../projectsMedia/model/projectsMedia.model");
+
+const parseArrayField = (value) => {
+  if (Array.isArray(value)) {
+    return value.filter(Boolean);
+  }
+
+  if (typeof value !== "string") {
+    return [];
+  }
+
+  const trimmedValue = value.trim();
+  if (!trimmedValue) {
+    return [];
+  }
+
+  try {
+    const parsedValue = JSON.parse(trimmedValue);
+    return Array.isArray(parsedValue) ? parsedValue.filter(Boolean) : [];
+  } catch (_error) {
+    return trimmedValue
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+};
+
+const parseBooleanField = (value, fallback = false) => {
+  if (typeof value === "boolean") return value;
+  if (typeof value !== "string") return fallback;
+
+  return value.toLowerCase() === "true";
+};
+
+const parseNumberField = (value, fallback = 0) => {
+  const parsedValue = Number(value);
+  return Number.isNaN(parsedValue) ? fallback : parsedValue;
+};
+
+const getUploadUrl = (filePath) => {
+  const normalizedPath = filePath.replace(/\\/g, "/");
+  const relativePath = normalizedPath.split("uploads/")[1];
+  return relativePath ? `/uploads/${relativePath}` : "";
+};
 
 exports.createProject = async (req, res) => {
   try {
@@ -10,12 +52,10 @@ exports.createProject = async (req, res) => {
       shortDescription,
       description,
       thumbnail,
-      images,
       category,
       techStack,
       githubUrl,
       liveUrl,
-      videoUrl,
       featured,
       status,
       startDate,
@@ -27,15 +67,69 @@ exports.createProject = async (req, res) => {
       order,
     } = req.body;
 
-    return res.status(200).json({
-      message: "Login successfully",
-      token,
-      user: {
-        email: existingUser.email,
-        name: existingUser.name,
-      },
+    const existingProject = await ProjectModel.findOne({ slug });
+    if (existingProject) {
+      return res.status(400).json({ message: "Project slug already exists" });
+    }
+
+    const thumbnailFile = req.files?.thumbnail?.[0];
+    const mediaFiles = req.files?.media || [];
+
+    const thumbnailUrl = thumbnailFile ? getUploadUrl(thumbnailFile.path) : thumbnail;
+
+    if (!thumbnailUrl) {
+      return res.status(400).json({
+        message: "Thumbnail is required, either as an uploaded file or a URL.",
+      });
+    }
+
+    const project = await ProjectModel.create({
+      title,
+      slug,
+      shortDescription,
+      description,
+      thumbnail: thumbnailUrl,
+      media: [],
+      category,
+      techStack: parseArrayField(techStack),
+      githubUrl,
+      liveUrl,
+      featured: parseBooleanField(featured),
+      status,
+      startDate: startDate || null,
+      endDate: endDate || null,
+      clientName,
+      role,
+      challenges,
+      solution,
+      order: parseNumberField(order),
+    });
+
+    let createdMedia = [];
+
+    if (mediaFiles.length > 0) {
+      createdMedia = await ProjectMediaModel.insertMany(
+        mediaFiles.map((file, index) => ({
+          projectId: project._id,
+          url: getUploadUrl(file.path),
+          type: file.mimetype.startsWith("video/") ? "video" : "image",
+          position: index,
+        })),
+      );
+
+      project.media = createdMedia.map((item) => item._id);
+      await project.save();
+    }
+
+    const populatedProject = await ProjectModel.findById(project._id).populate("media");
+
+    return res.status(201).json({
+      message: "Project created successfully",
+      data: populatedProject,
     });
   } catch (error) {
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({
+      message: error.message || "Internal server error",
+    });
   }
 };
