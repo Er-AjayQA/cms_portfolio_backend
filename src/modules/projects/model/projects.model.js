@@ -59,12 +59,6 @@ const projectSchema = new mongoose.Schema(
       default: false,
     },
 
-    status: {
-      type: String,
-      enum: ["draft", "published"],
-      default: "draft",
-    },
-
     startDate: Date,
     endDate: Date,
 
@@ -73,6 +67,17 @@ const projectSchema = new mongoose.Schema(
 
     challenges: String,
     solution: String,
+
+    status: {
+      type: String,
+      enum: ["draft", "published"],
+      default: "draft",
+    },
+
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );
