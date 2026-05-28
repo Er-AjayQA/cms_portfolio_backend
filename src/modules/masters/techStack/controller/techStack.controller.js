@@ -15,9 +15,7 @@ exports.createTechStack = async (req, res) => {
 
     return res.status(200).json({
       message: "Tech stack created successfully",
-      techStack: {
-        name,
-      },
+      data: techStack,
     });
   } catch (error) {
     return res.status(500).json({ message: "Internal server error" });

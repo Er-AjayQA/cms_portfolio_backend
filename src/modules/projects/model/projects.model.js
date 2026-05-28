@@ -73,11 +73,6 @@ const projectSchema = new mongoose.Schema(
 
     challenges: String,
     solution: String,
-
-    order: {
-      type: Number,
-      default: 0,
-    },
   },
   { timestamps: true },
 );

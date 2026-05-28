@@ -1,6 +1,28 @@
 const ProjectModel = require("../model/projects.model");
 const ProjectMediaModel = require("../../projectsMedia/model/projectsMedia.model");
 
+const projectPopulateConfig = [
+  {
+    path: "media",
+  },
+  {
+    path: "techStackId",
+    select: "_id name status isDeleted createdAt updatedAt",
+  },
+];
+
+const formatProjectResponse = (project) => {
+  if (!project) return project;
+
+  const formattedProject =
+    typeof project.toObject === "function" ? project.toObject() : project;
+
+  return {
+    ...formattedProject,
+    techStack: formattedProject.techStackId || [],
+  };
+};
+
 const parseArrayField = (value) => {
   if (Array.isArray(value)) {
     return value.filter(Boolean);
@@ -65,7 +87,6 @@ exports.createProject = async (req, res) => {
       role,
       challenges,
       solution,
-      order,
     } = req.body;
 
     const existingProject = await ProjectModel.findOne({ slug });
@@ -106,7 +127,6 @@ exports.createProject = async (req, res) => {
       role,
       challenges,
       solution,
-      order: parseNumberField(order),
     });
 
     let createdMedia = [];
@@ -126,12 +146,12 @@ exports.createProject = async (req, res) => {
     }
 
     const populatedProject = await ProjectModel.findById(project._id).populate(
-      "media",
+      projectPopulateConfig,
     );
 
     return res.status(201).json({
       message: "Project created successfully",
-      data: populatedProject,
+      data: formatProjectResponse(populatedProject),
     });
   } catch (error) {
     return res.status(500).json({
@@ -142,11 +162,11 @@ exports.createProject = async (req, res) => {
 
 exports.getAllProjects = async (req, res) => {
   try {
-    const projects = await ProjectModel.find().populate("media");
+    const projects = await ProjectModel.find().populate(projectPopulateConfig);
 
     return res.status(200).json({
       message: "Projects retrieved successfully",
-      data: projects,
+      data: projects.map(formatProjectResponse),
     });
   } catch (error) {
     return res.status(500).json({
@@ -158,10 +178,9 @@ exports.getAllProjects = async (req, res) => {
 exports.getBySlugProject = async (req, res) => {
   try {
     const { slug } = req.params;
-    const project = await ProjectModel.findOne({ slug }).populate([
-      "media",
-      "techStackId",
-    ]);
+    const project = await ProjectModel.findOne({ slug }).populate(
+      projectPopulateConfig,
+    );
 
     if (!project) {
       return res.status(404).json({
@@ -171,7 +190,7 @@ exports.getBySlugProject = async (req, res) => {
 
     return res.status(200).json({
       message: "Project retrieved successfully",
-      data: project,
+      data: formatProjectResponse(project),
     });
   } catch (error) {
     return res.status(500).json({
