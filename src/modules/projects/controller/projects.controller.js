@@ -378,7 +378,6 @@ exports.deleteProject = async (req, res) => {
       });
     }
 
-    await ProjectMediaModel.deleteMany({ projectId: project._id });
     await ProjectModel.updateOne({ _id: project._id }, { isDeleted: true });
 
     return res.status(201).json({
