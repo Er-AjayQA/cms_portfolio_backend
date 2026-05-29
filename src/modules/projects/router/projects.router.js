@@ -12,7 +12,11 @@ module.exports = (app) => {
     uploadProjectMedia,
     projectController.updateProject,
   );
-  app.delete("/projects/:id", projectController.deleteProject);
   app.get("/projects", projectController.getAllProjects);
+  app.delete(
+    "/projects/delete-projects",
+    projectController.deleteMultipleProjects,
+  );
   app.get("/projects/:slug", projectController.getBySlugProject);
+  app.delete("/projects/:id", projectController.deleteProject);
 };

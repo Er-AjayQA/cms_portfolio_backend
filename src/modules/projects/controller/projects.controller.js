@@ -391,3 +391,31 @@ exports.deleteProject = async (req, res) => {
     });
   }
 };
+
+exports.deleteMultipleProjects = async (req, res) => {
+  try {
+    const { ids } = req.body;
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide project ids",
+      });
+    }
+
+    const result = await ProjectModel.updateMany(
+      { _id: { $in: ids } },
+      { $set: { isDeleted: true } },
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: `${result.modifiedCount} project(s) deleted successfully`,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    });
+  }
+};
