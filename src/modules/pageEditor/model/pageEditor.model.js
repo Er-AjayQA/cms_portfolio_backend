@@ -8,19 +8,19 @@ const pageSchema = new mongoose.Schema(
       required: true,
     },
 
-    sectionKey: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-
     sectionType: {
       type: String,
       required: true,
       trim: true,
     },
 
-    label: {
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    subTitle: {
       type: String,
       required: true,
       trim: true,
@@ -33,6 +33,11 @@ const pageSchema = new mongoose.Schema(
 
     settingsJson: {
       type: JSON,
+    },
+
+    isVisible: {
+      type: Boolean,
+      default: false,
     },
 
     isDeleted: {
