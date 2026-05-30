@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const pageSchema = new mongoose.Schema(
+const pageSectionSchema = new mongoose.Schema(
   {
     pageId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -22,7 +22,6 @@ const pageSchema = new mongoose.Schema(
 
     subTitle: {
       type: String,
-      required: true,
       trim: true,
     },
 
@@ -31,8 +30,9 @@ const pageSchema = new mongoose.Schema(
       default: 1,
     },
 
-    settingsJson: {
-      type: JSON,
+    contentJson: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {},
     },
 
     isVisible: {
@@ -48,5 +48,5 @@ const pageSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-const pageModel = mongoose.model("page", pageSchema);
-module.exports = pageModel;
+const pageSectionModel = mongoose.model("pageSection", pageSectionSchema);
+module.exports = pageSectionModel;

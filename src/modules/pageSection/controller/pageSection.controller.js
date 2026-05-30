@@ -1,4 +1,4 @@
-const PageModel = require("../model/pageEditor.model");
+const PageModel = require("../model/pageSection.model");
 
 exports.createPage = async (req, res) => {
   try {

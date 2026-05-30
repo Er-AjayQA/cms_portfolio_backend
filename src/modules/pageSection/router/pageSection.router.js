@@ -1,4 +1,4 @@
-const pageController = require("../controller/pageEditor.controller");
+const pageController = require("../controller/pageSection.controller");
 
 module.exports = (app) => {
   app.post("/page/create", pageController.createPage);
