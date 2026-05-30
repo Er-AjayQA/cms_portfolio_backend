@@ -1,8 +1,28 @@
 const PageModel = require("../model/pages.model");
 
+const normalizeSections = (sections = [], pageId) => {
+  if (!Array.isArray(sections)) {
+    return [];
+  }
+
+  return sections.map((section, index) => ({
+    pageId,
+    sectionType: section?.sectionType || "hero",
+    title: section?.title || section?.sectionType || `section-${index + 1}`,
+    subTitle: section?.subTitle || "",
+    display_order: Number(section?.display_order || index + 1),
+    contentJson:
+      section?.contentJson && typeof section.contentJson === "object"
+        ? section.contentJson
+        : {},
+    isVisible: Boolean(section?.isVisible),
+    isDeleted: Boolean(section?.isDeleted),
+  }));
+};
+
 exports.createPage = async (req, res) => {
   try {
-    const { title, pageKey, slug, status } = req.body;
+    const { title, pageKey, slug, status, sections } = req.body;
 
     const existingPage = await PageModel.findOne({ slug });
 
@@ -10,12 +30,16 @@ exports.createPage = async (req, res) => {
       return res.status(400).json({ message: "Page slug already exists" });
     }
 
-    const page = await PageModel.create({
+    const page = new PageModel({
       title,
       pageKey,
       slug,
       status,
+      sections: [],
     });
+
+    page.sections = normalizeSections(sections, page._id);
+    await page.save();
 
     return res.status(201).json({
       message: "Page created successfully",
@@ -31,7 +55,7 @@ exports.createPage = async (req, res) => {
 exports.updatePage = async (req, res) => {
   try {
     const { slug } = req.params;
-    const { title, pageKey, slug: newSlug, status } = req.body;
+    const { title, pageKey, slug: newSlug, status, sections } = req.body;
 
     const existingPage = await PageModel.findOne({
       slug,
@@ -66,6 +90,7 @@ exports.updatePage = async (req, res) => {
       pageKey,
       slug: normalizedSlug || existingPage.slug,
       status,
+      sections: normalizeSections(sections, existingPage._id),
     });
 
     await existingPage.save();
