@@ -11,6 +11,7 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 require("./modules/auth/router/auth.router")(app);
 require("./modules/masters/techStack/router/techStack.router")(app);
+require("./modules/masters/skillCategory/router/skillCategory.router")(app);
 require("./modules/projects/router/projects.router")(app);
 require("./modules/pages/router/pages.router")(app);
 
