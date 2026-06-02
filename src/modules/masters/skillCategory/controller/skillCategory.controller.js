@@ -108,9 +108,11 @@ exports.updateStatusSkillCategory = async (req, res) => {
 
 exports.getAllSkillCategory = async (req, res) => {
   try {
-    const skillCategory = await skillCategoryModel.find({
-      isDeleted: { $ne: true },
-    });
+    const skillCategory = await skillCategoryModel
+      .find({
+        isDeleted: { $ne: true },
+      })
+      .sort({ updatedAt: -1 });
 
     return res.status(200).json({
       message: "Skill category retrieved successfully",

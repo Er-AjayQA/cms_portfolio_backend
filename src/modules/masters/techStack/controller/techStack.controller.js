@@ -111,7 +111,7 @@ exports.updateStatusTechStack = async (req, res) => {
 
 exports.getAllTechStack = async (req, res) => {
   try {
-    const techStacks = await techStackModel.find();
+    const techStacks = await techStackModel.find().sort({ updatedAt: -1 });
 
     return res.status(200).json({
       message: "Tech stacks retrieved successfully",

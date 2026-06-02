@@ -324,7 +324,9 @@ exports.getAllProjects = async (req, res) => {
   try {
     const projects = await ProjectModel.find({
       isDeleted: { $ne: true },
-    }).populate(projectPopulateConfig);
+    })
+      .populate(projectPopulateConfig)
+      .sort({ updatedAt: -1 });
 
     return res.status(200).json({
       success: true,
