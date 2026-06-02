@@ -32,9 +32,9 @@ exports.createTechStack = async (req, res) => {
 exports.updateTechStack = async (req, res) => {
   try {
     const { slug } = req.params;
-    const { name, slug: newSlug, status } = req.body;
+    const { name, newSlug, status } = req.body;
 
-    const existingData = await teckStackModel.findOne({
+    const existingData = await techStackModel.findOne({
       slug,
       isDeleted: { $ne: true },
     });
@@ -46,7 +46,7 @@ exports.updateTechStack = async (req, res) => {
     const normalizedSlug = (newSlug || slug || "").trim().toLowerCase();
 
     if (normalizedSlug && normalizedSlug !== existingData.slug) {
-      const slugExists = await teckStackModel.findOne({
+      const slugExists = await techStackModel.findOne({
         slug: normalizedSlug,
         _id: { $ne: existingData._id },
         isDeleted: { $ne: true },
@@ -60,16 +60,17 @@ exports.updateTechStack = async (req, res) => {
       }
     }
 
-    const teckStack = await teckStackModel.updateOne(
+    const techStack = await techStackModel.updateOne(
       { _id: existingData?._id },
       {
         name,
-        slug: normalizedSlug || existingData.slug,
+        slug: normalizedSlug,
         status,
       },
     );
 
     return res.status(201).json({
+      success: true,
       message: "Record updated successfully",
     });
   } catch (error) {
@@ -81,7 +82,7 @@ exports.updateStatusTechStack = async (req, res) => {
   try {
     const { slug } = req.params;
 
-    const existingData = await teckStackModel.findOne({
+    const existingData = await techStackModel.findOne({
       slug,
       isDeleted: { $ne: true },
     });
@@ -121,7 +122,7 @@ exports.getAllTechStack = async (req, res) => {
   }
 };
 
-exports.getBySlugTeckStack = async (req, res) => {
+exports.getBySlugTechStack = async (req, res) => {
   try {
     const { slug } = req.params;
 
@@ -176,7 +177,7 @@ exports.deleteTechStack = async (req, res) => {
   }
 };
 
-exports.deleteMultipleTeckStacks = async (req, res) => {
+exports.deleteMultipleTechStacks = async (req, res) => {
   try {
     const { ids } = req.body;
 

@@ -30,7 +30,7 @@ exports.createSkillCategory = async (req, res) => {
 exports.updateSkillCategory = async (req, res) => {
   try {
     const { slug } = req.params;
-    const { name, slug: newSlug, status } = req.body;
+    const { name, newSlug, status } = req.body;
 
     const existingData = await skillCategoryModel.findOne({
       slug,

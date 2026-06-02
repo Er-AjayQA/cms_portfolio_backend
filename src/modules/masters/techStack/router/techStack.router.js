@@ -9,12 +9,12 @@ module.exports = (app) => {
   );
   app.delete(
     "/tech-stack/delete-multiple",
-    techStackController.deleteMultipleTeckStacks,
+    techStackController.deleteMultipleTechStacks,
   );
   app.get("/tech-stack/get-all", techStackController.getAllTechStack);
   app.get(
     "/tech-stack/get-by-slug/:slug",
-    techStackController.getBySlugTeckStack,
+    techStackController.getBySlugTechStack,
   );
   app.delete("/tech-stack/delete/:id", techStackController.deleteTechStack);
 };
